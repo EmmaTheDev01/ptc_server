@@ -4,7 +4,7 @@ import {
   deleteAdvert,
   findAllAdverts,
   findAdvert,
-  getFeauturedAdvert,
+  getFeaturedAdverts,
   getAdvertBySearch,
   getAdvertCounts,
   updateAdvert,
@@ -23,6 +23,6 @@ router.get("/:id", findAdvert);
 router.get("/", findAllAdverts);
 //Search Adverts
 router.get("/search/getAdvertBySearch", getAdvertBySearch);
-router.get("/search/getFeaturedAdverts", getFeauturedAdvert);
+router.get("/search/getFeaturedAdverts", getFeaturedAdverts);
 router.get("/search/getAdvertCounts", getAdvertCounts);
 export default router;
