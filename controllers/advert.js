@@ -97,11 +97,9 @@ export const findAllAdverts = async (req, res) => {
 
 // Get a Advert from a search query
 export const getAdvertBySearch = async (req, res) => {
-  const { city, distance,title } = req.query;
+  const {title } = req.query;
   try {
     const AdvertSearch = await Advert.find({
-      city: { $regex: new RegExp(city, "i") },
-      distance: { $gte: parseInt(distance) },
       title: { $regex: new RegExp(title, "i") },
     }).populate("reviews");
     res.status(200).json({

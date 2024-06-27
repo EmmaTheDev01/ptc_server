@@ -1,11 +1,26 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import cloudinary from "cloudinary";
 
 // User registration controllers
 export const register = async (req, res) => {
   try {
     const { username, email, password, phone, photo } = req.body;
+    
+    // Example usage of cloudinary to upload avatar
+    let myCloud;
+    try {
+      myCloud = await cloudinary.v2.uploader.upload(photo, {
+        folder: "avatars",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Error uploading avatar",
+      });
+    }
+
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
     const newUser = new User({
@@ -13,7 +28,10 @@ export const register = async (req, res) => {
       email,
       phone,
       password: hash,
-      photo,
+      photo: {
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
+      },
     });
     await newUser.save();
     res.status(200).json({
@@ -27,37 +45,28 @@ export const register = async (req, res) => {
     });
   }
 };
-//User authentication controllers
+
+// User authentication controllers
 export const login = async (req, res) => {
-  const email = req.body.email;
+  const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    //if user does not exist
     if (!user) {
       return res.status(404).json({
         success: false,
         message: "User not found!",
       });
     }
-    //if the user exist and the password is valid
 
-    //compare password from your hash
-
-    const checkCorrectPassword = await bcrypt.compare(
-      req.body.password,
-      user.password
-    );
-
-    //if password is incorrect
+    const checkCorrectPassword = await bcrypt.compare(password, user.password);
     if (!checkCorrectPassword) {
       return res.status(401).json({
         success: false,
         message: "Invalid credentials",
       });
     }
-    const { password, role, ...rest } = user._doc;
 
-    //create a jwt token
+    const { password: userPassword, role, ...rest } = user._doc;
 
     const token = jwt.sign(
       {
@@ -68,11 +77,11 @@ export const login = async (req, res) => {
       { expiresIn: "15d" }
     );
 
-    //Set token into the browser as cookies
+    // Set token into the browser as cookies
     res
       .cookie("accessToken", token, {
         httpOnly: true,
-        expires: token.expiresIn,
+        expires: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days in milliseconds
       })
       .status(200)
       .json({
