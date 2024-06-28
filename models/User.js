@@ -23,14 +23,13 @@ const userSchema = new mongoose.Schema(
     photo: {
       public_id: {
         type: String,
-        required: true,
+        required: false, // Make this field not required
       },
       url: {
         type: String,
-        required: true,
+        required: false, // Make this field not required
       },
     },
-
     role: {
       type: String,
       default: "user",

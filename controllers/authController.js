@@ -2,50 +2,64 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import cloudinary from "cloudinary";
-
 // User registration controllers
 export const register = async (req, res) => {
   try {
     const { username, email, password, phone, photo } = req.body;
     
-    // Example usage of cloudinary to upload avatar
-    let myCloud;
-    try {
-      myCloud = await cloudinary.v2.uploader.upload(photo, {
-        folder: "avatars",
+    let newUser;
+    
+    if (photo) {
+      // Usage of cloudinary to upload avatar
+      let myCloud;
+      try {
+        myCloud = await cloudinary.v2.uploader.upload(photo, {
+          folder: "avatars",
+        });
+      } catch (error) {
+        console.error("Cloudinary upload error:", error);
+        return res.status(500).json({
+          success: false,
+          message: "Error uploading avatar",
+        });
+      }
+
+      const salt = bcrypt.genSaltSync(10);
+      const hash = bcrypt.hashSync(password, salt);
+      newUser = new User({
+        username,
+        email,
+        phone,
+        password: hash,
+        photo: {
+          public_id: myCloud.public_id,
+          url: myCloud.secure_url,
+        },
       });
-    } catch (error) {
-      return res.status(500).json({
-        success: false,
-        message: "Error uploading avatar",
+    } else {
+      const salt = bcrypt.genSaltSync(10);
+      const hash = bcrypt.hashSync(password, salt);
+      newUser = new User({
+        username,
+        email,
+        phone,
+        password: hash,
       });
     }
 
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(password, salt);
-    const newUser = new User({
-      username,
-      email,
-      phone,
-      password: hash,
-      photo: {
-        public_id: myCloud.public_id,
-        url: myCloud.secure_url,
-      },
-    });
     await newUser.save();
     res.status(200).json({
       success: true,
       message: "User registered successfully",
     });
   } catch (err) {
+    console.error("User registration error:", err);
     res.status(500).json({
       success: false,
       message: "Failed to create a user, try again",
     });
   }
 };
-
 // User authentication controllers
 export const login = async (req, res) => {
   const { email, password } = req.body;
