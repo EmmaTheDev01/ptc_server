@@ -5,8 +5,8 @@ import { verifyAdmin, verifyUser } from "../utils/verifyToken.js";
 
 const router = express.Router()
 
-router.post('/', verifyUser, createPaymentRequest);
+router.post('/request', verifyUser, createPaymentRequest);
 router.get('/:id', verifyUser, getPaymentRequest);
-router.get('/', verifyAdmin, getAllPaymentRequest);
+router.get('/payments', verifyAdmin, getAllPaymentRequest);
 
 export default router;

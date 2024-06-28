@@ -9,16 +9,16 @@ const router = express.Router()
 
 //update a Users 
 
-router.put("/:id",verifyUser, updateUser);
+router.put("/:id", verifyUser, updateUser);
 //delete a Users
 
-router.delete("/:id",verifyAdmin, deleteUser);
+router.delete("/:id", verifyAdmin, deleteUser);
 //find a Users
 
-router.get("/:id",verifyUser, findUser);
+router.get("/:id", verifyUser, findUser);
 //find  all Users
 
-router.get("/",verifyAdmin, findAllUsers);
+router.get("/users", verifyAdmin, findAllUsers);
 
 
 export default router;
