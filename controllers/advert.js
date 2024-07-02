@@ -1,3 +1,4 @@
+// advertController.js
 import Advert from "../models/Advert.js";
 import cloudinary from 'cloudinary';
 
@@ -25,7 +26,7 @@ const uploadImageToCloudinary = async (file) => {
 };
 
 // Controller for creating a new advert
-export const createAdvert = async (req, res) => {
+export const createAdvert = async (req, res, next) => {
   try {
     const imageUrl = await uploadImageToCloudinary(req.file);
 
@@ -47,15 +48,12 @@ export const createAdvert = async (req, res) => {
     });
   } catch (err) {
     console.error("Error creating advert:", err);
-    res.status(500).json({
-      success: false,
-      message: 'Advert not saved, try again!'
-    });
+    next(err);
   }
 };
 
 // Controller for updating an advert
-export const updateAdvert = async (req, res) => {
+export const updateAdvert = async (req, res, next) => {
   try {
     const id = req.params.id;
     const updatedFields = { ...req.body };
@@ -93,15 +91,12 @@ export const updateAdvert = async (req, res) => {
     });
   } catch (err) {
     console.error("Error updating advert:", err);
-    res.status(500).json({
-      success: false,
-      message: "Advert not updated, try again"
-    });
+    next(err);
   }
 };
 
 // Controller for deleting an advert
-export const deleteAdvert = async (req, res) => {
+export const deleteAdvert = async (req, res, next) => {
   const id = req.params.id;
   try {
     const deletedAdvert = await Advert.findByIdAndDelete(id);
@@ -117,15 +112,12 @@ export const deleteAdvert = async (req, res) => {
     });
   } catch (err) {
     console.error("Error deleting advert:", err);
-    res.status(500).json({
-      success: false,
-      message: "Failed to delete advert"
-    });
+    next(err);
   }
 };
 
 // Controller for finding a single advert by ID
-export const findAdvert = async (req, res) => {
+export const findAdvert = async (req, res, next) => {
   try {
     const findSingleAdvert = await Advert.findById(req.params.id);
     if (!findSingleAdvert) {
@@ -141,15 +133,12 @@ export const findAdvert = async (req, res) => {
     });
   } catch (err) {
     console.error("Error finding advert:", err);
-    res.status(500).json({
-      success: false,
-      message: "Failed to find advert"
-    });
+    next(err);
   }
 };
 
 // Controller for finding all adverts with pagination
-export const findAllAdverts = async (req, res) => {
+export const findAllAdverts = async (req, res, next) => {
   const page = parseInt(req.query.page) || 0;
   try {
     const perPage = 8;
@@ -165,15 +154,12 @@ export const findAllAdverts = async (req, res) => {
     });
   } catch (err) {
     console.error("Error finding all adverts:", err);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch adverts"
-    });
+    next(err);
   }
 };
 
 // Controller for searching adverts by title
-export const getAdvertBySearch = async (req, res) => {
+export const getAdvertBySearch = async (req, res, next) => {
   const { title } = req.query;
   try {
     const advertSearch = await Advert.find({
@@ -187,15 +173,12 @@ export const getAdvertBySearch = async (req, res) => {
     });
   } catch (err) {
     console.error("Error searching adverts:", err);
-    res.status(500).json({
-      success: false,
-      message: "Failed to search adverts"
-    });
+    next(err);
   }
 };
 
 // Controller for fetching featured adverts
-export const getFeaturedAdverts = async (req, res) => {
+export const getFeaturedAdverts = async (req, res, next) => {
   try {
     const featuredAdverts = await Advert.find({ featured: true })
       .limit(8);
@@ -213,15 +196,12 @@ export const getFeaturedAdverts = async (req, res) => {
     }
   } catch (err) {
     console.error("Error fetching featured adverts:", err);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch featured adverts"
-    });
+    next(err);
   }
 };
 
 // Controller for counting number of adverts
-export const getAdvertCounts = async (req, res) => {
+export const getAdvertCounts = async (req, res, next) => {
   try {
     const advertCount = await Advert.estimatedDocumentCount();
     res.status(200).json({
@@ -231,9 +211,6 @@ export const getAdvertCounts = async (req, res) => {
     });
   } catch (err) {
     console.error("Error counting adverts:", err);
-    res.status(500).json({
-      success: false,
-      message: "Failed to count adverts"
-    });
+    next(err);
   }
 };

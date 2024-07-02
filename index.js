@@ -8,6 +8,7 @@ import authRoute from "./routes/auth.js";
 import AdvertRoute from "./routes/advert.js";
 import userRoute from "./routes/users.js";
 import PaymentRequestRoute from "./routes/PaymentRequest.js";
+import { errorHandler } from "./errorHandler.js";
 
 // Load environment variables
 dotenv.config();
@@ -47,12 +48,14 @@ const connectDB = async () => {
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
+// Error handling middleware
+app.use(errorHandler);
 
 // Routes
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/adverts", AdvertRoute);
 app.use("/api/v1/users", userRoute);
-app.use("/api/v1/booking", PaymentRequestRoute);
+app.use("/api/v1/payment", PaymentRequestRoute);
 
 // Start server
 app.listen(port, () => {

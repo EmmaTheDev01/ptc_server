@@ -12,7 +12,7 @@ import {
 import { verifyAdmin, verifyUser } from "../utils/verifyToken.js";
 const router = express.Router();
 //create a new Advert
-router.post("/advertise", verifyAdmin, createAdvert);
+router.post("/create", verifyAdmin, createAdvert);
 //update a Advert
 router.put("/:id", verifyAdmin, updateAdvert);
 //delete a Advert
