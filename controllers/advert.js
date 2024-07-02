@@ -1,4 +1,3 @@
-// advertController.js
 import Advert from "../models/Advert.js";
 import cloudinary from 'cloudinary';
 
@@ -12,33 +11,38 @@ cloudinary.config({
 // Function to upload image to Cloudinary
 const uploadImageToCloudinary = async (file) => {
   if (!file) return null;
-  
+
   try {
     const result = await cloudinary.v2.uploader.upload(file.path, {
       folder: "adverts",
       eager: [{ width: 400, height: 300, crop: "fill" }]
     });
-    return result.secure_url;
+    return {
+      public_id: result.public_id,
+      url: result.secure_url,
+    };
   } catch (err) {
     console.error("Error uploading image to Cloudinary:", err);
     throw new Error("Error uploading image to Cloudinary");
   }
 };
 
-// Controller for creating a new advert
+// Controller for creating a new advert with photo upload
 export const createAdvert = async (req, res, next) => {
   try {
-    const imageUrl = await uploadImageToCloudinary(req.file);
+    // Upload image to Cloudinary
+    const imageLink = await uploadImageToCloudinary(req.file);
 
+    // Create new advert object
     const newAdvert = new Advert({
-      ...req.body,
-      photo: {
-        public_id: req.body.photo.public_id,
-        url: imageUrl || req.body.photo.url, // Update photo url if uploaded
-      },
-      featured: req.body.featured || false, // Set featured status
+      title: req.body.title,
+      desc: req.body.desc,
+      price: req.body.price,
+      photo: imageLink || null,
+      featured: req.body.featured || false,
     });
 
+    // Save advert to MongoDB
     const savedAdvert = await newAdvert.save();
 
     res.status(200).json({
@@ -57,12 +61,13 @@ export const updateAdvert = async (req, res, next) => {
   try {
     const id = req.params.id;
     const updatedFields = { ...req.body };
-    const imageUrl = await uploadImageToCloudinary(req.file);
 
-    if (imageUrl) {
+    // Handle image update
+    if (req.file) {
+      const imageUrl = await uploadImageToCloudinary(req.file);
       updatedFields.photo = {
-        public_id: req.body.photo.public_id,
-        url: imageUrl, // Update photo url if uploaded
+        public_id: req.file.filename,
+        url: imageUrl.url,
       };
     }
 
@@ -94,6 +99,7 @@ export const updateAdvert = async (req, res, next) => {
     next(err);
   }
 };
+
 
 // Controller for deleting an advert
 export const deleteAdvert = async (req, res, next) => {

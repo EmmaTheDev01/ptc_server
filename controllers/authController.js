@@ -6,9 +6,9 @@ import cloudinary from "cloudinary";
 export const register = async (req, res) => {
   try {
     const { username, email, password, phone, photo } = req.body;
-    
+
     let newUser;
-    
+
     if (photo) {
       // Usage of cloudinary to upload avatar
       let myCloud;
@@ -93,7 +93,7 @@ export const login = async (req, res) => {
 
     // Set token into the browser as cookies
     res
-      .cookie("accessToken", token, {
+      .cookie("token", token, {
         httpOnly: true,
         expires: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days in milliseconds
       })
