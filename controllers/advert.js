@@ -1,3 +1,4 @@
+// Import necessary modules
 import Advert from "../models/Advert.js";
 import cloudinary from 'cloudinary';
 
@@ -10,7 +11,9 @@ cloudinary.config({
 
 // Function to upload image to Cloudinary
 const uploadImageToCloudinary = async (file) => {
-  if (!file) return null;
+  if (!file) {
+    throw new Error("No file provided");
+  }
 
   try {
     const result = await cloudinary.v2.uploader.upload(file.path, {
@@ -66,7 +69,7 @@ export const updateAdvert = async (req, res, next) => {
     if (req.file) {
       const imageUrl = await uploadImageToCloudinary(req.file);
       updatedFields.photo = {
-        public_id: req.file.filename,
+        public_id: imageUrl.public_id,
         url: imageUrl.url,
       };
     }
@@ -99,7 +102,6 @@ export const updateAdvert = async (req, res, next) => {
     next(err);
   }
 };
-
 
 // Controller for deleting an advert
 export const deleteAdvert = async (req, res, next) => {
