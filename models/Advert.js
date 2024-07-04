@@ -7,30 +7,31 @@ const advertSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    photo: {
-      public_id: {
-        type: String,
-
-      },
-      url: {
-        type: String,
-
-      },
-    },
     desc: {
       type: String,
       required: true,
-    },
-    avgRating: {
-      type: Number,
     },
     price: {
       type: Number,
       required: true,
     },
+    photo: {
+      public_id: {
+        type: String,
+      },
+      url: {
+        type: String,
+      },
+    },
+    imageUrl: {
+      type: String,
+    },
+    avgRating: {
+      type: Number,
+    },
     featured: {
       type: Boolean,
-      default: false, // Default value for featured is false
+      default: false,
     },
   },
   { timestamps: true }

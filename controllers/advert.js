@@ -1,12 +1,12 @@
-// Import necessary modules
 import Advert from "../models/Advert.js";
-import cloudinary from 'cloudinary';
+import cloudinary from "cloudinary";
+import mongoose from "mongoose";
 
 // Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 // Function to upload image to Cloudinary
@@ -18,7 +18,7 @@ const uploadImageToCloudinary = async (file) => {
   try {
     const result = await cloudinary.v2.uploader.upload(file.path, {
       folder: "adverts",
-      eager: [{ width: 400, height: 300, crop: "fill" }]
+      eager: [{ width: 400, height: 300, crop: "fill" }],
     });
     return {
       public_id: result.public_id,
@@ -30,18 +30,39 @@ const uploadImageToCloudinary = async (file) => {
   }
 };
 
-// Controller for creating a new advert with photo upload
+// Controller for creating a new advert with photo upload or image URL
 export const createAdvert = async (req, res, next) => {
   try {
-    // Upload image to Cloudinary
-    const imageLink = await uploadImageToCloudinary(req.file);
+    let photo = [];
+
+    if (req.body.photo) {
+      if (typeof req.body.photo === "string") {
+        photo.push(req.body.photo);
+      } else if (Array.isArray(req.body.photo)) {
+        photo = req.body.photo;
+      }
+    }
+
+    const photoLinks = [];
+
+    for (let i = 0; i < photo.length; i++) {
+      const result = await cloudinary.v2.uploader.upload(photo[i], {
+        folder: "adverts", // Ensure consistent folder name
+      });
+
+      photoLinks.push({
+        public_id: result.public_id,
+        url: result.secure_url,
+      });
+    }
 
     // Create new advert object
     const newAdvert = new Advert({
       title: req.body.title,
       desc: req.body.desc,
       price: req.body.price,
-      photo: imageLink || null,
+      photo: photoLinks, // Set the 'photo' field to the array of photo objects
+      imageUrl: req.body.imageUrl, // Include imageUrl from request body
       featured: req.body.featured || false,
     });
 
@@ -51,14 +72,13 @@ export const createAdvert = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Advert saved successfully",
-      data: savedAdvert
+      data: savedAdvert,
     });
   } catch (err) {
     console.error("Error creating advert:", err);
     next(err);
   }
 };
-
 // Controller for updating an advert
 export const updateAdvert = async (req, res, next) => {
   try {
@@ -72,11 +92,15 @@ export const updateAdvert = async (req, res, next) => {
         public_id: imageUrl.public_id,
         url: imageUrl.url,
       };
+    } else {
+      // Remove photo if imageUrl is specified
+      delete updatedFields.photo;
     }
 
-    // Ensure featured is updated if provided
-    if (req.body.featured !== undefined) {
-      updatedFields.featured = req.body.featured;
+    // Validate the updatedFields object
+    const validationError = Advert.validate(updatedFields);
+    if (validationError) {
+      throw validationError;
     }
 
     const updatedAdvert = await Advert.findByIdAndUpdate(
@@ -88,14 +112,14 @@ export const updateAdvert = async (req, res, next) => {
     if (!updatedAdvert) {
       return res.status(404).json({
         success: false,
-        message: "Advert not found"
+        message: "Advert not found",
       });
     }
 
     res.status(200).json({
       success: true,
       message: "Advert updated successfully",
-      data: updatedAdvert
+      data: updatedAdvert,
     });
   } catch (err) {
     console.error("Error updating advert:", err);
@@ -111,7 +135,7 @@ export const deleteAdvert = async (req, res, next) => {
     if (!deletedAdvert) {
       return res.status(404).json({
         success: false,
-        message: "Advert not found"
+        message: "Advert not found",
       });
     }
     res.status(200).json({
@@ -131,7 +155,7 @@ export const findAdvert = async (req, res, next) => {
     if (!findSingleAdvert) {
       return res.status(404).json({
         success: false,
-        message: "Advert not found"
+        message: "Advert not found",
       });
     }
     res.status(200).json({
@@ -188,8 +212,7 @@ export const getAdvertBySearch = async (req, res, next) => {
 // Controller for fetching featured adverts
 export const getFeaturedAdverts = async (req, res, next) => {
   try {
-    const featuredAdverts = await Advert.find({ featured: true })
-      .limit(8);
+    const featuredAdverts = await Advert.find({ featured: true }).limit(8);
     if (featuredAdverts.length > 0) {
       res.status(200).json({
         success: true,
