@@ -26,6 +26,10 @@ const advertSchema = new mongoose.Schema(
     imageUrl: {
       type: String,
     },
+    redirect: {
+      type: String,
+      required: true,
+    },
     avgRating: {
       type: Number,
     },

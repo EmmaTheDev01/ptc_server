@@ -1,5 +1,8 @@
+// controllers/advertController.js
+import mongoose from "mongoose";
 import Advert from "../models/Advert.js";
-import cloudinary from "cloudinary";
+import cloudinary from "../utils/cloudinaryConfig.js";
+import { upload } from "../utils/multerConfig.js";
 
 // Function to upload image to Cloudinary
 const uploadImageToCloudinary = async (file) => {
@@ -21,38 +24,47 @@ const uploadImageToCloudinary = async (file) => {
 // Controller for creating a new advert with photo upload or image URL
 export const createAdvert = async (req, res, next) => {
   try {
-    let photoLinks = [];
+    // Handle file uploads with Multer
+    upload(req, res, async (err) => {
+      if (err) {
+        console.error("Error uploading files:", err);
+        return next(err);
+      }
 
-    // Handle single or multiple photos
-    if (req.files && req.files.length > 0) {
-      photoLinks = await Promise.all(
-        req.files.map(async (file) => {
-          const imageUrl = await uploadImageToCloudinary(file);
-          return {
-            public_id: imageUrl.public_id,
-            url: imageUrl.url,
-          };
-        })
-      );
-    }
+      let photoLinks = [];
 
-    // Create new advert object
-    const newAdvert = new Advert({
-      title: req.body.title,
-      desc: req.body.desc,
-      price: req.body.price,
-      photo: photoLinks, // Array of photo objects
-      imageUrl: req.body.imageUrl, // Include imageUrl from request body if needed
-      featured: req.body.featured || false,
-    });
+      // Upload images to Cloudinary
+      if (req.files && req.files.length > 0) {
+        photoLinks = await Promise.all(
+          req.files.map(async (file) => {
+            const imageUrl = await uploadImageToCloudinary(file);
+            return {
+              public_id: imageUrl.public_id,
+              url: imageUrl.url,
+            };
+          })
+        );
+      }
 
-    // Save advert to MongoDB
-    const savedAdvert = await newAdvert.save();
+      // Create new advert object
+      const newAdvert = new Advert({
+        title: req.body.title,
+        desc: req.body.desc,
+        price: req.body.price,
+        photo: photoLinks, // Array of photo objects
+        imageUrl: req.body.imageUrl,
+        redirect: req.body.redirect,
+        featured: req.body.featured || false,
+      });
 
-    res.status(200).json({
-      success: true,
-      message: "Advert saved successfully",
-      data: savedAdvert,
+      // Save advert to MongoDB
+      const savedAdvert = await newAdvert.save();
+
+      res.status(200).json({
+        success: true,
+        message: "Advert saved successfully",
+        data: savedAdvert,
+      });
     });
   } catch (err) {
     console.error("Error creating advert:", err);
@@ -63,53 +75,69 @@ export const createAdvert = async (req, res, next) => {
 export const updateAdvert = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const updatedFields = { ...req.body };
 
-    // Handle single or multiple photos
-    if (req.files && req.files.length > 0) {
-      photoLinks = await Promise.all(
-        req.files.map(async (file) => {
-          const imageUrl = await uploadImageToCloudinary(file);
-          return {
-            public_id: imageUrl.public_id,
-            url: imageUrl.url,
-          };
-        })
+    // Handle file uploads with Multer
+    upload(req, res, async (err) => {
+      if (err) {
+        console.error("Error uploading files:", err);
+        return next(err);
+      }
+
+      let photoLinks = [];
+
+      // Upload images to Cloudinary
+      if (req.files && req.files.length > 0) {
+        photoLinks = await Promise.all(
+          req.files.map(async (file) => {
+            const imageUrl = await uploadImageToCloudinary(file);
+            return {
+              public_id: imageUrl.public_id,
+              url: imageUrl.url,
+            };
+          })
+        );
+      } else {
+        // If no new files uploaded, retain existing photo links
+        const existingAdvert = await Advert.findById(id);
+        if (existingAdvert) {
+          photoLinks = existingAdvert.photo;
+        }
+      }
+
+      // Validate the updatedFields object
+      const validationError = Advert.validate(req.body);
+      if (validationError) {
+        throw validationError;
+      }
+
+      // Update advert in MongoDB
+      const updatedAdvert = await Advert.findByIdAndUpdate(
+        id,
+        { $set: { ...req.body, photo: photoLinks } }, // Update fields including new photo links
+        { new: true }
       );
-    } else {
-      // Remove photo if imageUrl is specified
-      delete updatedFields.photo;
-    }
 
-    // Validate the updatedFields object
-    const validationError = Advert.validate(updatedFields);
-    if (validationError) {
-      throw validationError;
-    }
+      if (!updatedAdvert) {
+        return res.status(404).json({
+          success: false,
+          message: "Advert not found",
+        });
+      }
 
-    const updatedAdvert = await Advert.findByIdAndUpdate(
-      id,
-      { $set: updatedFields },
-      { new: true }
-    );
-
-    if (!updatedAdvert) {
-      return res.status(404).json({
-        success: false,
-        message: "Advert not found",
+      res.status(200).json({
+        success: true,
+        message: "Advert updated successfully",
+        data: updatedAdvert,
       });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Advert updated successfully",
-      data: updatedAdvert,
     });
   } catch (err) {
     console.error("Error updating advert:", err);
     next(err);
   }
 };
+
+// Other controller functions (delete, find, findAll, search, etc.) as per your requirements
+
 // Controller for deleting an advert
 export const deleteAdvert = async (req, res, next) => {
   const id = req.params.id;
@@ -134,7 +162,17 @@ export const deleteAdvert = async (req, res, next) => {
 // Controller for finding a single advert by ID
 export const findAdvert = async (req, res, next) => {
   try {
-    const findSingleAdvert = await Advert.findById(req.params.id);
+    const id = req.params.id;
+
+    // Validate ObjectId
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid advert ID",
+      });
+    }
+
+    const findSingleAdvert = await Advert.findById(id);
     if (!findSingleAdvert) {
       return res.status(404).json({
         success: false,
@@ -152,18 +190,12 @@ export const findAdvert = async (req, res, next) => {
   }
 };
 
-// Controller for finding all adverts with pagination
+// Controller for finding all adverts
 export const findAllAdverts = async (req, res, next) => {
-  const page = parseInt(req.query.page) || 0;
   try {
-    const perPage = 8;
-    const allAdverts = await Advert.find({})
-      .skip(page * perPage)
-      .limit(perPage);
-    const count = await Advert.countDocuments({});
+    const allAdverts = await Advert.find({});
     res.status(200).json({
       success: true,
-      count,
       message: "All adverts available",
       data: allAdverts,
     });

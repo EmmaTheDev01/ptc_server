@@ -9,7 +9,6 @@ import AdvertRoute from "./routes/advert.js";
 import userRoute from "./routes/users.js";
 import PaymentRequestRoute from "./routes/PaymentRequest.js";
 import { errorHandler } from "./errorHandler.js";
-import multer from "multer";
 import bodyParser from "body-parser";
 
 // Load environment variables
