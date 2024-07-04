@@ -1,20 +1,8 @@
 import Advert from "../models/Advert.js";
 import cloudinary from "cloudinary";
-import mongoose from "mongoose";
-
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 // Function to upload image to Cloudinary
 const uploadImageToCloudinary = async (file) => {
-  if (!file) {
-    throw new Error("No file provided");
-  }
-
   try {
     const result = await cloudinary.v2.uploader.upload(file.path, {
       folder: "adverts",
@@ -33,27 +21,19 @@ const uploadImageToCloudinary = async (file) => {
 // Controller for creating a new advert with photo upload or image URL
 export const createAdvert = async (req, res, next) => {
   try {
-    let photo = [];
+    let photoLinks = [];
 
-    if (req.body.photo) {
-      if (typeof req.body.photo === "string") {
-        photo.push(req.body.photo);
-      } else if (Array.isArray(req.body.photo)) {
-        photo = req.body.photo;
-      }
-    }
-
-    const photoLinks = [];
-
-    for (let i = 0; i < photo.length; i++) {
-      const result = await cloudinary.v2.uploader.upload(photo[i], {
-        folder: "adverts", // Ensure consistent folder name
-      });
-
-      photoLinks.push({
-        public_id: result.public_id,
-        url: result.secure_url,
-      });
+    // Handle single or multiple photos
+    if (req.files && req.files.length > 0) {
+      photoLinks = await Promise.all(
+        req.files.map(async (file) => {
+          const imageUrl = await uploadImageToCloudinary(file);
+          return {
+            public_id: imageUrl.public_id,
+            url: imageUrl.url,
+          };
+        })
+      );
     }
 
     // Create new advert object
@@ -61,8 +41,8 @@ export const createAdvert = async (req, res, next) => {
       title: req.body.title,
       desc: req.body.desc,
       price: req.body.price,
-      photo: photoLinks, // Set the 'photo' field to the array of photo objects
-      imageUrl: req.body.imageUrl, // Include imageUrl from request body
+      photo: photoLinks, // Array of photo objects
+      imageUrl: req.body.imageUrl, // Include imageUrl from request body if needed
       featured: req.body.featured || false,
     });
 
@@ -85,13 +65,17 @@ export const updateAdvert = async (req, res, next) => {
     const id = req.params.id;
     const updatedFields = { ...req.body };
 
-    // Handle image update
-    if (req.file) {
-      const imageUrl = await uploadImageToCloudinary(req.file);
-      updatedFields.photo = {
-        public_id: imageUrl.public_id,
-        url: imageUrl.url,
-      };
+    // Handle single or multiple photos
+    if (req.files && req.files.length > 0) {
+      photoLinks = await Promise.all(
+        req.files.map(async (file) => {
+          const imageUrl = await uploadImageToCloudinary(file);
+          return {
+            public_id: imageUrl.public_id,
+            url: imageUrl.url,
+          };
+        })
+      );
     } else {
       // Remove photo if imageUrl is specified
       delete updatedFields.photo;
@@ -126,7 +110,6 @@ export const updateAdvert = async (req, res, next) => {
     next(err);
   }
 };
-
 // Controller for deleting an advert
 export const deleteAdvert = async (req, res, next) => {
   const id = req.params.id;

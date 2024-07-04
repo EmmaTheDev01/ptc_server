@@ -1,4 +1,5 @@
 import express from "express";
+import multer from "multer";
 import {
   createAdvert,
   deleteAdvert,
@@ -10,19 +11,20 @@ import {
   updateAdvert,
 } from "../controllers/advert.js";
 import { verifyAdmin, verifyUser } from "../utils/verifyToken.js";
+
 const router = express.Router();
-//create a new Advert
-router.post("/create", createAdvert);
-//update a Advert
-router.put("/:id", verifyAdmin, updateAdvert);
-//delete a Advert
+
+// Configure multer for file uploads
+const upload = multer({ dest: "uploads/" });
+
+// Routes
+router.post("/create", upload.array("photo", 5), createAdvert); // Handle multiple photos
+router.put("/:id", verifyAdmin, upload.single("photo"), updateAdvert); // Handle single photo
 router.delete("/:id", verifyAdmin, deleteAdvert);
-//find a Advert
 router.get("/:id", findAdvert);
-//find  all Adverts
 router.get("/all-ads", findAllAdverts);
-//Search Adverts
 router.get("/search/getAdvertBySearch", getAdvertBySearch);
 router.get("/search/getFeaturedAdverts", getFeaturedAdverts);
 router.get("/search/getAdvertCounts", getAdvertCounts);
+
 export default router;

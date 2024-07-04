@@ -9,6 +9,8 @@ import AdvertRoute from "./routes/advert.js";
 import userRoute from "./routes/users.js";
 import PaymentRequestRoute from "./routes/PaymentRequest.js";
 import { errorHandler } from "./errorHandler.js";
+import multer from "multer";
+import bodyParser from "body-parser";
 
 // Load environment variables
 dotenv.config();
@@ -40,7 +42,6 @@ const connectDB = async () => {
     console.log("MongoDB connected");
   } catch (err) {
     console.error("MongoDB connection error:", err.message);
-    process.exit(1); // Exit process with failure
   }
 };
 
@@ -48,6 +49,9 @@ const connectDB = async () => {
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 // Error handling middleware
 app.use(errorHandler);
 
