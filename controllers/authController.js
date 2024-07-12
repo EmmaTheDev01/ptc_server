@@ -114,6 +114,7 @@ export const login = async (req, res) => {
 // Controller to get user profile
 export const getProfile = async (req, res) => {
   try {
+    // Fetch user profile based on the user ID from the token
     const user = await User.findById(req.user.id).select("-password");
     if (!user) {
       return res.status(404).json({
@@ -127,6 +128,7 @@ export const getProfile = async (req, res) => {
       data: user,
     });
   } catch (err) {
+    console.error("Failed to retrieve user profile:", err);
     res.status(500).json({
       success: false,
       message: "Failed to retrieve user profile",
