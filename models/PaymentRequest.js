@@ -3,19 +3,15 @@ import mongoose from "mongoose";
 const PaymentRequestSchema = new mongoose.Schema(
     {
         userId: {
-            type: String,
-
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true,
         },
         userEmail: {
             type: String,
             required: true,
-
         },
         fullName: {
-            type: String,
-            required: true,
-        },
-        AdvertTitle: {
             type: String,
             required: true,
         },
@@ -23,17 +19,20 @@ const PaymentRequestSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-
+        approved: {
+            type: Boolean,
+            default: false,
+            required: true,
+        },
+        amount: {
+            type: Number,
+            required: true,
+        },
         paymentDate: {
             type: Date,
             required: true,
-
         },
-        PaymentStatus: {
-            type: Date,
-            required: true,
-
-        },
+      
     },
     { timestamps: true }
 );

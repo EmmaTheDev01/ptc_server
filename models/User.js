@@ -20,6 +20,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    currentBalance: {
+      type: Number,
+      default: 0,
+    },
+    withdrawnBalance: {
+      type: Number,
+      default: 0,
+    },
     photo: {
       public_id: {
         type: String,
