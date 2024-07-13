@@ -8,6 +8,6 @@ router.put("/:id", verifyUser, updateUser);
 router.delete("/:id", verifyAdmin, deleteUser);
 router.get("/:id", verifyUser, findUser);
 router.get("/", verifyAdmin, findAllUsers);
-router.get("/updatebalance", verifyAdmin, updateUserBalance);
+router.put("/updatebalance", verifyAdmin, updateUserBalance);
 
 export default router;
