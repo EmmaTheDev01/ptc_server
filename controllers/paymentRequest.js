@@ -17,12 +17,12 @@ export const createPaymentRequest = async (req, res) => {
 
   try {
     const newPaymentRequest = new PaymentRequest({
-      userId: req.user.id,
+      userId: req.user._id, // Ensure userId is correctly populated from req.user._id
       fullName,
       userEmail,
       phone,
       amount: parsedAmount,
-      approved: false, // Default to false
+      approved: false,
     });
 
     const savedPaymentRequest = await newPaymentRequest.save();
@@ -37,7 +37,7 @@ export const createPaymentRequest = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to create payment request',
-      error: err.message, // Optional: Send error message for debugging
+      error: err.message,
     });
   }
 };

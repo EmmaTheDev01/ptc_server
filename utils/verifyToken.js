@@ -1,13 +1,11 @@
+// utils/verifyToken.js
+
 import jwt from "jsonwebtoken";
 
 export const verifyToken = (req, res, next) => {
   const tokenFromCookie = req.cookies?.token;
   const tokenFromHeader = req.headers.authorization?.split(" ")[1];
   const token = tokenFromCookie || tokenFromHeader;
-
-  console.log('Token from cookie:', tokenFromCookie);
-  console.log('Token from header:', tokenFromHeader);
-  console.log('Token:', token);
 
   if (!token) {
     return res.status(401).json({
@@ -24,7 +22,7 @@ export const verifyToken = (req, res, next) => {
         message: "Invalid token",
       });
     }
-    req.user = user;
+    req.user = user; // Assuming your JWT payload includes user details including _id
     next();
   });
 };

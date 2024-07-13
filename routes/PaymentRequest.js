@@ -1,9 +1,11 @@
+// routes/paymentRequest.js
+
 import express from "express";
 import {
-  createPaymentRequest,
-  getAllPaymentRequests,
-  getPaymentRequest,
-  getAllApprovedPaymentRequests,
+    createPaymentRequest,
+    getPaymentRequest,
+    getAllPaymentRequests,
+    getAllApprovedPaymentRequests,
 } from "../controllers/paymentRequest.js";
 
 import { verifyAdmin, verifyUser } from "../utils/verifyToken.js";
