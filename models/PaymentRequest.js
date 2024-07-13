@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const PaymentRequestSchema = new mongoose.Schema(
     {
         userId: {
@@ -25,6 +27,7 @@ const PaymentRequestSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
+      
     },
     { timestamps: true }
 );
