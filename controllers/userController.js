@@ -18,6 +18,37 @@ export const updateUser = async (req, res) => {
     }
 };
 
+// Update User Balance Controller
+export const updateUserBalance = async (req, res) => {
+    const userId = req.params.id;
+    const { amount } = req.body;
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        user.currentBalance -= amount;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'User balance updated successfully',
+            data: user
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to update user balance'
+        });
+    }
+};
+
+
 // Delete User Controller
 export const deleteUser = async (req, res) => {
     const userId = req.params.id;
