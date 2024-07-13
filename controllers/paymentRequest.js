@@ -11,8 +11,6 @@ export const createPaymentRequest = async (req, res) => {
             userEmail,
             phone,
             amount,
-            paymentDate: new Date(), // Assuming paymentDate should be set automatically
-            approved: false, // Assuming initially all requests are not approved
         });
 
         const savedPaymentRequest = await newPaymentRequest.save();
