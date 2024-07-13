@@ -17,7 +17,7 @@ export const createPaymentRequest = async (req, res) => {
 
   try {
     const newPaymentRequest = new PaymentRequest({
-      userId: req.user._id, // Assuming userId is obtained from authentication middleware
+      userId: req.user.id,
       fullName,
       userEmail,
       phone,
