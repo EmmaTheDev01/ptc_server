@@ -34,7 +34,7 @@ export const updateUserBalance = async (req, res) => {
       }
   
       user.currentBalance += amount; 
-      user.withdrawnBalance = amount;
+      user.withdrawnBalance = amount * -1;
   
       await user.save();
   
