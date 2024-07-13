@@ -25,11 +25,7 @@ const PaymentRequestSchema = new mongoose.Schema(
             required: true,
         },
         amount: {
-            type: mongoose.Types.Decimal128, 
-            required: true,
-        },
-        paymentDate: {
-            type: Date,
+            type: Number,
             required: true,
         },
       
