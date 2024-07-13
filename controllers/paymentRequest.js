@@ -1,10 +1,9 @@
-// controllers/paymentController.js
-
-import PaymentRequest from "../models/PaymentRequest.js";
+import mongoose from 'mongoose';
+import PaymentRequest from '../models/PaymentRequest.js';
 
 // Create a payment request
 export const createPaymentRequest = async (req, res) => {
-  const { fullName, userEmail, phone, amount, userId } = req.body; // Extract userId from req.body
+  const { fullName, userEmail, phone, amount, userId } = req.body;
 
   // Ensure amount is a valid number
   const parsedAmount = parseFloat(amount);
@@ -16,8 +15,11 @@ export const createPaymentRequest = async (req, res) => {
   }
 
   try {
+    // Convert userId to ObjectId
+    const objectIdUserId = mongoose.Types.ObjectId(userId);
+
     const newPaymentRequest = new PaymentRequest({
-      userId, // Use userId from req.body
+      userId: objectIdUserId, // Use ObjectId for userId
       fullName,
       userEmail,
       phone,
