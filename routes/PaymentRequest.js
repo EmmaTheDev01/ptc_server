@@ -17,6 +17,6 @@ router.post("/request", verifyUser, createPaymentRequest);
 router.get("/:id", verifyUser, getPaymentRequest);
 router.get("/", verifyAdmin, getAllPaymentRequests);
 router.get("/approved", verifyAdmin, getAllApprovedPaymentRequests);
-router.get("/approve-request", verifyAdmin, approvePaymentRequest);
+router.put("/approve/:id", verifyAdmin, approvePaymentRequest); 
 
 export default router;

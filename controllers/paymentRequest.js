@@ -106,9 +106,11 @@ export const getAllApprovedPaymentRequests = async (req, res) => {
   }
 };
 
+
 // Set a payment request to approved
 export const approvePaymentRequest = async (req, res) => {
-  const id = req.params._id;
+  const id = req.params.id; // Corrected to req.params.id
+  
   try {
     const paymentRequest = await PaymentRequest.findByIdAndUpdate(
       id,
