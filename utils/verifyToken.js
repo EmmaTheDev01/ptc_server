@@ -33,7 +33,7 @@ export const verifyUser = (req, res, next) => {
   verifyToken(req, res, () => {
     console.log('User verification:', req.user);
     const { id, role } = req.user;
-    if (id === req.params.id || role === "admin") {
+    if (id === req.params.id || role === "admin" || role === "user") {
       next();
     } else {
       return res.status(403).json({
