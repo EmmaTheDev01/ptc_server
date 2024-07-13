@@ -5,12 +5,25 @@ import PaymentRequest from "../models/PaymentRequest.js";
 export const createPaymentRequest = async (req, res) => {
     const { fullName, userEmail, phone, amount } = req.body;
 
+    // Ensure amount is a valid number
+    const parsedAmount = parseFloat(amount);
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid amount. Amount must be a valid number greater than 0.",
+        });
+    }
+
     try {
+        // Assuming userId is extracted from authentication middleware
         const newPaymentRequest = new PaymentRequest({
+            userId: req.user._id, // Assuming userId is obtained from authentication middleware
             fullName,
             userEmail,
             phone,
-            amount,
+            amount: parsedAmount, // Use parsed amount
+            approved: false, // Default to false
+            paymentDate: new Date(), // Set current date
         });
 
         const savedPaymentRequest = await newPaymentRequest.save();
@@ -25,10 +38,10 @@ export const createPaymentRequest = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'PaymentRequest failed',
+            error: err.message, // Optional: Send error message for debugging
         });
     }
 };
-
 export const getPaymentRequest = async (req, res) => {
     const id = req.params.id;
     try {
