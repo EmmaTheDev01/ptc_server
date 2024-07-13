@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const PaymentRequestSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     required: true,
   },
   fullName: {
