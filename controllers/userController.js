@@ -33,7 +33,8 @@ export const updateUserBalance = async (req, res) => {
         });
       }
   
-      user.currentBalance += amount;  // Update balance correctly (add or subtract depending on the amount)
+      user.currentBalance += amount; 
+      user.withdrawnBalance = amount;
   
       await user.save();
   
