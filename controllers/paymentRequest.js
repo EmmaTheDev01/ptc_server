@@ -8,18 +8,29 @@ export const createPaymentRequest = async (req, res) => {
   // Ensure amount is a valid number
   const parsedAmount = parseFloat(amount);
   if (isNaN(parsedAmount) || parsedAmount <= 0) {
+    console.error('Invalid amount:', amount);  // Log invalid amount
     return res.status(400).json({
       success: false,
       message: "Invalid amount. Amount must be a valid number greater than 0.",
     });
   }
 
+  // Validate userId format
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    console.error('Invalid userId:', userId);  // Log invalid userId
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid userId format.',
+    });
+  }
+
   try {
-    // Convert userId to ObjectId
-    const objectIdUserId = mongoose.Types.ObjectId(userId);
+    // Convert userId to ObjectId correctly
+    const objectIdUserId = new mongoose.Types.ObjectId(userId);  // Use 'new' to instantiate ObjectId
+    console.log('Converted userId to ObjectId:', objectIdUserId);  // Log the converted ObjectId
 
     const newPaymentRequest = new PaymentRequest({
-      userId: objectIdUserId, // Use ObjectId for userId
+      userId: objectIdUserId,  // Use ObjectId for userId
       fullName,
       userEmail,
       phone,
@@ -28,6 +39,7 @@ export const createPaymentRequest = async (req, res) => {
     });
 
     const savedPaymentRequest = await newPaymentRequest.save();
+    console.log('Payment Request Saved:', savedPaymentRequest);  // Log the saved payment request
 
     res.status(200).json({
       success: true,
@@ -35,7 +47,7 @@ export const createPaymentRequest = async (req, res) => {
       data: savedPaymentRequest,
     });
   } catch (err) {
-    console.error("Error saving payment request:", err);
+    console.error('Error saving payment request:', err);  // Log detailed error
     res.status(500).json({
       success: false,
       message: 'Failed to create payment request',
@@ -43,6 +55,7 @@ export const createPaymentRequest = async (req, res) => {
     });
   }
 };
+
 
 // Get a specific payment request by ID
 export const getPaymentRequest = async (req, res) => {
