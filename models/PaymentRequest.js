@@ -1,9 +1,7 @@
-import mongoose from "mongoose";
-
 const PaymentRequestSchema = new mongoose.Schema(
     {
         userId: {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
             required: true,
         },
         userEmail: {
@@ -27,7 +25,6 @@ const PaymentRequestSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
-      
     },
     { timestamps: true }
 );
