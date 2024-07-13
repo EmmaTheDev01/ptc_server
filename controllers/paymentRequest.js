@@ -1,7 +1,10 @@
+// controllers/paymentController.js
+
 import PaymentRequest from "../models/PaymentRequest.js";
 
+// Create a payment request
 export const createPaymentRequest = async (req, res) => {
-  const { userId, fullName, userEmail, phone, amount } = req.body;
+  const { fullName, userEmail, phone, amount } = req.body;
 
   // Ensure amount is a valid number
   const parsedAmount = parseFloat(amount);
@@ -14,88 +17,91 @@ export const createPaymentRequest = async (req, res) => {
 
   try {
     const newPaymentRequest = new PaymentRequest({
-      userId, // Assuming userId is obtained from authentication middleware
+      userId: req.user._id, // Assuming userId is obtained from authentication middleware
       fullName,
       userEmail,
       phone,
       amount: parsedAmount,
       approved: false, // Default to false
-      paymentDate: new Date(), // Set current date
     });
 
     const savedPaymentRequest = await newPaymentRequest.save();
 
     res.status(200).json({
       success: true,
-      message: 'PaymentRequest successful',
+      message: 'Payment request successful',
       data: savedPaymentRequest,
     });
   } catch (err) {
     console.error("Error saving payment request:", err);
     res.status(500).json({
       success: false,
-      message: 'PaymentRequest failed',
+      message: 'Failed to create payment request',
       error: err.message, // Optional: Send error message for debugging
     });
   }
 };
 
+// Get a specific payment request by ID
 export const getPaymentRequest = async (req, res) => {
-    const id = req.params.id;
-    try {
-        const paymentRequest = await PaymentRequest.findById(id);
-        if (!paymentRequest) {
-            return res.status(404).json({
-                success: false,
-                message: "PaymentRequest not found",
-            });
-        }
-        res.status(200).json({
-            success: true,
-            message: "PaymentRequest details",
-            data: paymentRequest,
-        });
-    } catch (err) {
-        console.error("Error fetching payment request details:", err);
-        res.status(500).json({
-            success: false,
-            message: "Failed to fetch payment request details",
-        });
+  const id = req.params.id;
+  try {
+    const paymentRequest = await PaymentRequest.findById(id);
+    if (!paymentRequest) {
+      return res.status(404).json({
+        success: false,
+        message: "Payment request not found",
+      });
     }
+    res.status(200).json({
+      success: true,
+      message: "Payment request details",
+      data: paymentRequest,
+    });
+  } catch (err) {
+    console.error("Error fetching payment request details:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch payment request details",
+      error: err.message,
+    });
+  }
 };
 
-export const getAllPaymentRequest = async (req, res) => {
-    try {
-        const allPaymentRequest = await PaymentRequest.find();
-        res.status(200).json({
-            success: true,
-            message: "PaymentRequest details",
-            data: allPaymentRequest,
-        });
-    } catch (err) {
-        console.error("Error fetching all payment requests:", err);
-        res.status(500).json({
-            success: false,
-            message: "Failed to fetch all payment requests",
-        });
-    }
+// Get all payment requests
+export const getAllPaymentRequests = async (req, res) => {
+  try {
+    const allPaymentRequests = await PaymentRequest.find();
+    res.status(200).json({
+      success: true,
+      message: "All payment requests",
+      data: allPaymentRequests,
+    });
+  } catch (err) {
+    console.error("Error fetching all payment requests:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch all payment requests",
+      error: err.message,
+    });
+  }
 };
 
+// Get all approved payment requests
 export const getAllApprovedPaymentRequests = async (req, res) => {
-    try {
-        const approvedPaymentRequests = await PaymentRequest.find({
-            approved: true,
-        });
-        res.status(200).json({
-            success: true,
-            message: "Approved PaymentRequests details",
-            data: approvedPaymentRequests,
-        });
-    } catch (err) {
-        console.error("Error fetching approved payment requests:", err);
-        res.status(500).json({
-            success: false,
-            message: "Failed to fetch approved payment requests",
-        });
-    }
+  try {
+    const approvedPaymentRequests = await PaymentRequest.find({ approved: true });
+    res.status(200).json({
+      success: true,
+      message: "Approved payment requests",
+      data: approvedPaymentRequests,
+    });
+  } catch (err) {
+    console.error("Error fetching approved payment requests:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch approved payment requests",
+      error: err.message,
+    });
+  }
 };
