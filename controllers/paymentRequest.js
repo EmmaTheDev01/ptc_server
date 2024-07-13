@@ -4,7 +4,7 @@ import PaymentRequest from "../models/PaymentRequest.js";
 
 // Create a payment request
 export const createPaymentRequest = async (req, res) => {
-  const { fullName, userEmail, phone, amount } = req.body;
+  const { fullName, userEmail, phone, amount, userId } = req.body; // Extract userId from req.body
 
   // Ensure amount is a valid number
   const parsedAmount = parseFloat(amount);
@@ -17,7 +17,7 @@ export const createPaymentRequest = async (req, res) => {
 
   try {
     const newPaymentRequest = new PaymentRequest({
-      userId: req.user._id, // Ensure userId is correctly populated from req.user._id
+      userId, // Use userId from req.body
       fullName,
       userEmail,
       phone,
@@ -41,7 +41,6 @@ export const createPaymentRequest = async (req, res) => {
     });
   }
 };
-
 // Get a specific payment request by ID
 export const getPaymentRequest = async (req, res) => {
   const id = req.params.id;
