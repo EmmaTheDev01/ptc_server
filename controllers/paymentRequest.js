@@ -14,12 +14,13 @@ export const createPaymentRequest = async (req, res) => {
 
   try {
     const newPaymentRequest = new PaymentRequest({
-      userId, 
+      userId, // Assuming userId is obtained from authentication middleware
       fullName,
       userEmail,
       phone,
       amount: parsedAmount,
       approved: false, // Default to false
+      paymentDate: new Date(), // Set current date
     });
 
     const savedPaymentRequest = await newPaymentRequest.save();
@@ -34,7 +35,7 @@ export const createPaymentRequest = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'PaymentRequest failed',
-      error: err.message, 
+      error: err.message, // Optional: Send error message for debugging
     });
   }
 };
