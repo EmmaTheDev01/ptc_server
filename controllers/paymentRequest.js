@@ -41,9 +41,10 @@ export const createPaymentRequest = async (req, res) => {
     });
   }
 };
+
 // Get a specific payment request by ID
 export const getPaymentRequest = async (req, res) => {
-  const id = req.params.id;
+  const id = req.params._id;
   try {
     const paymentRequest = await PaymentRequest.findById(id);
     if (!paymentRequest) {
@@ -100,6 +101,38 @@ export const getAllApprovedPaymentRequests = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to fetch approved payment requests",
+      error: err.message,
+    });
+  }
+};
+
+// Set a payment request to approved
+export const approvePaymentRequest = async (req, res) => {
+  const id = req.params._id;
+  try {
+    const paymentRequest = await PaymentRequest.findByIdAndUpdate(
+      id,
+      { approved: true },
+      { new: true } // To return the updated document
+    );
+
+    if (!paymentRequest) {
+      return res.status(404).json({
+        success: false,
+        message: "Payment request not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Payment request approved",
+      data: paymentRequest,
+    });
+  } catch (err) {
+    console.error("Error approving payment request:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to approve payment request",
       error: err.message,
     });
   }

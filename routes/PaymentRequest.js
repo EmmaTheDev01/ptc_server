@@ -6,6 +6,7 @@ import {
     getPaymentRequest,
     getAllPaymentRequests,
     getAllApprovedPaymentRequests,
+    approvePaymentRequest,
 } from "../controllers/paymentRequest.js";
 
 import { verifyAdmin, verifyUser } from "../utils/verifyToken.js";
@@ -16,5 +17,6 @@ router.post("/request", verifyUser, createPaymentRequest);
 router.get("/:id", verifyUser, getPaymentRequest);
 router.get("/", verifyAdmin, getAllPaymentRequests);
 router.get("/approved", verifyAdmin, getAllApprovedPaymentRequests);
+router.get("/approve-request", verifyAdmin, approvePaymentRequest);
 
 export default router;
