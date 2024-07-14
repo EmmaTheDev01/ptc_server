@@ -8,6 +8,7 @@ import authRoute from "./routes/auth.js";
 import AdvertRoute from "./routes/advert.js";
 import userRoute from "./routes/users.js";
 import PaymentRequestRoute from "./routes/PaymentRequest.js";
+import ContactRoute from "./routes/Contact.js";
 import { errorHandler } from "./errorHandler.js";
 import bodyParser from "body-parser";
 
@@ -59,6 +60,7 @@ app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/adverts", AdvertRoute);
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/payment", PaymentRequestRoute);
+app.use("/api/v1/contact", ContactRoute);
 
 // Start server
 app.listen(port, () => {
