@@ -1,5 +1,6 @@
 import express from 'express';
 import { createContact, getContacts } from '../controllers/contactController.js';
+import { verifyAdmin } from '../utils/verifyToken.js';
 
 const router = express.Router();
 
@@ -7,6 +8,6 @@ const router = express.Router();
 router.post('/send', createContact);
 
 // Route for getting all contacts
-router.get('/', getContacts);
+router.get('/', verifyAdmin, getContacts);
 
 export default router;
