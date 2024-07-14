@@ -25,11 +25,6 @@ const contactSchema = new mongoose.Schema(
     phone: {
       type: String,
       required: true,
-      trim: true,
-      validate: {
-        validator: (v) => /^\+?[1-9]\d{1,14}$/.test(v),
-        message: 'Invalid phone number',
-      },
     },
     message: {
       type: String,
