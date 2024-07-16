@@ -22,35 +22,35 @@ export const updateUser = async (req, res) => {
 export const updateUserBalance = async (req, res) => {
     const userId = req.params.id;
     const { amount } = req.body;
-  
+
     try {
-      console.log(`Updating balance for userId: ${userId}, amount: ${amount}`);
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: `User with id ${userId} not found`
+        console.log(`Updating balance for userId: ${userId}, amount: ${amount}`);
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: `User with id ${userId} not found`
+            });
+        }
+
+        user.currentBalance += amount;
+        user.withdrawnBalance = amount * -1;
+
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'User balance updated successfully, new balance: ' + user.currentBalance,
+            data: user
         });
-      }
-  
-      user.currentBalance += amount; 
-      user.withdrawnBalance = amount * -1;
-  
-      await user.save();
-  
-      res.status(200).json({
-        success: true,
-        message: 'User balance updated successfully, new balance: ' + user.currentBalance,
-        data: user
-      });
     } catch (err) {
-      res.status(500).json({
-        success: false,
-        message: 'Failed to update user balance, ' + err
-      });
+        res.status(500).json({
+            success: false,
+            message: 'Failed to update user balance, ' + err
+        });
     }
-  };
-  
+};
+
 
 
 // Delete User Controller
@@ -116,8 +116,8 @@ export const findAllUsers = async (req, res) => {
         });
     }
 };
-//Daily user counter
 
+//Daily user counter
 export const getDailyUserCount = async (req, res) => {
     const startOfDay = moment().startOf('day').toDate();
     const endOfDay = moment().endOf('day').toDate();
@@ -132,7 +132,7 @@ export const getDailyUserCount = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: 'Daily user count fetched successfully',
+            message: 'Daily user count',
             data: dailyUserCount,
         });
     } catch (err) {
