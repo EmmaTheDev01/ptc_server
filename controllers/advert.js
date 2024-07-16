@@ -260,3 +260,45 @@ export const getAdvertCounts = async (req, res, next) => {
     next(err);
   }
 };
+
+
+export const startAdView = async (req, res) => {
+  try {
+    const { adUrl } = req.body;
+    const userId = req.user.id; // Assuming user ID is added to req.user by verifyUser middleware
+
+    // Start tracking ad view logic here
+    // Save information to database if necessary
+
+    res.status(200).json({ success: true, message: "Ad view tracking started" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const confirmAdView = async (req, res) => {
+  try {
+    const { adUrl } = req.body;
+    const userId = req.user.id; // Assuming user ID is added to req.user by verifyUser middleware
+
+    // Logic to confirm ad view and process the reward
+    // For example, update user balance
+
+    res.status(200).json({ success: true, message: "Ad view confirmed, reward processed" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const cancelAdView = async (req, res) => {
+  try {
+    const { adUrl } = req.body;
+    const userId = req.user.id; // Assuming user ID is added to req.user by verifyUser middleware
+
+    // Logic to cancel ad view and reject the reward
+
+    res.status(200).json({ success: true, message: "Ad view canceled, reward rejected" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
