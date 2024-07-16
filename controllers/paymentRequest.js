@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import PaymentRequest from '../models/PaymentRequest.js';
-
+import moment from 'moment';
 // Create a payment request
 export const createPaymentRequest = async (req, res) => {
   const { fullName, userEmail, phone, amount, userId } = req.body;
@@ -150,6 +150,33 @@ export const approvePaymentRequest = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to approve payment request",
+      error: err.message,
+    });
+  }
+};
+// Get daily payment request count
+export const getDailyPaymentRequestCount = async (req, res) => {
+  const startOfDay = moment().startOf('day').toDate();
+  const endOfDay = moment().endOf('day').toDate();
+
+  try {
+    const dailyPaymentRequestCount = await PaymentRequest.countDocuments({
+      createdAt: {
+        $gte: startOfDay,
+        $lte: endOfDay,
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Daily payment request count',
+      data: dailyPaymentRequestCount,
+    });
+  } catch (err) {
+    console.error('Error fetching daily payment request count:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch daily payment request count',
       error: err.message,
     });
   }
