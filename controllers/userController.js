@@ -117,13 +117,14 @@ export const findAllUsers = async (req, res) => {
         });
     }
 };
-
-//count daily registers
+// Count daily registered users
 export const getDailyUserCount = async (req, res) => {
-    const startOfDay = moment().startOf('day').toDate();
-    const endOfDay = moment().endOf('day').toDate();
+    // Get the start and end of the current day in UTC
+    const startOfDay = moment().startOf('day').utc().toDate();
+    const endOfDay = moment().endOf('day').utc().toDate();
 
     try {
+        // Count the number of users registered today
         const dailyUserCount = await User.countDocuments({
             createdAt: {
                 $gte: startOfDay,
