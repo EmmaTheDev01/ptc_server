@@ -57,6 +57,7 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"], // Consider specifying possible roles
       default: "user",
     },
+    createdAt: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );
