@@ -30,9 +30,9 @@ router.get("/search/getFeaturedAdverts", getFeaturedAdverts);
 router.get("/search/getAdvertCounts", getAdvertCounts);
 router.get("/:id", findAdvert); // Dynamic path should come last
 // New Routes for Ad Viewing and Rewards
-router.post("/api/ads/start", verifyUser, startAdView); // Start tracking ad view
-router.post("/api/ads/confirm", verifyUser, confirmAdView); // Confirm ad view and process reward
-router.post("/api/ads/cancel", verifyUser, cancelAdView); // Cancel ad view and reject reward
+router.post("/start", verifyUser, startAdView); // Start tracking ad view
+router.post("/confirm", verifyUser, confirmAdView); // Confirm ad view and process reward
+router.post("/cancel", verifyUser, cancelAdView); // Cancel ad view and reject reward
 
 
 export default router;

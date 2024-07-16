@@ -261,44 +261,52 @@ export const getAdvertCounts = async (req, res, next) => {
   }
 };
 
+// Simplified controller functions for ad viewing and rewards
 
 export const startAdView = async (req, res) => {
   try {
-    const { adUrl } = req.body;
-    const userId = req.user.id; // Assuming user ID is added to req.user by verifyUser middleware
+    // Placeholder logic to handle ad view tracking
+    // You would typically update or create a record in your database
+    console.log("Ad view tracking started");
 
-    // Start tracking ad view logic here
-    // Save information to database if necessary
-
-    res.status(200).json({ success: true, message: "Ad view tracking started" });
+    // Respond with success
+    res
+      .status(200)
+      .json({ success: true, message: "Ad view tracking started" });
   } catch (error) {
+    // Respond with error if something goes wrong
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
 export const confirmAdView = async (req, res) => {
   try {
-    const { adUrl } = req.body;
-    const userId = req.user.id; // Assuming user ID is added to req.user by verifyUser middleware
+    // Placeholder logic to confirm ad view and process reward
+    // You would typically update user balance or similar
+    console.log("Ad view confirmed, reward processed");
 
-    // Logic to confirm ad view and process the reward
-    // For example, update user balance
-
-    res.status(200).json({ success: true, message: "Ad view confirmed, reward processed" });
+    // Respond with success
+    res
+      .status(200)
+      .json({ success: true, message: "Ad view confirmed, reward processed" });
   } catch (error) {
+    // Respond with error if something goes wrong
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
 export const cancelAdView = async (req, res) => {
   try {
-    const { adUrl } = req.body;
-    const userId = req.user.id; // Assuming user ID is added to req.user by verifyUser middleware
+    // Placeholder logic to cancel ad view and reject reward
+    // You would typically handle any cleanup or state changes
+    console.log("Ad view canceled, reward rejected");
 
-    // Logic to cancel ad view and reject the reward
-
-    res.status(200).json({ success: true, message: "Ad view canceled, reward rejected" });
+    // Respond with success
+    res
+      .status(200)
+      .json({ success: true, message: "Ad view canceled, reward rejected" });
   } catch (error) {
+    // Respond with error if something goes wrong
     res.status(500).json({ success: false, message: error.message });
   }
 };
