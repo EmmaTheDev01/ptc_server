@@ -12,6 +12,7 @@ import ContactRoute from "./routes/Contact.js";
 import { errorHandler } from "./errorHandler.js";
 import bodyParser from "body-parser";
 
+
 // Load environment variables
 dotenv.config();
 

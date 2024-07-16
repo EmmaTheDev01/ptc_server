@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import moment from 'moment';
 
 // Update User Controller
 export const updateUser = async (req, res) => {
@@ -117,7 +118,7 @@ export const findAllUsers = async (req, res) => {
     }
 };
 
-//Daily user counter
+//count daily registers
 export const getDailyUserCount = async (req, res) => {
     const startOfDay = moment().startOf('day').toDate();
     const endOfDay = moment().endOf('day').toDate();
@@ -136,9 +137,11 @@ export const getDailyUserCount = async (req, res) => {
             data: dailyUserCount,
         });
     } catch (err) {
+        console.error('Error fetching daily user count:', err);  // Log the error
         res.status(500).json({
             success: false,
             message: 'Failed to fetch daily user count',
+            error: err.message,  // Include error message in the response
         });
     }
 };
