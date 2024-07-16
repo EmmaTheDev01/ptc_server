@@ -265,10 +265,7 @@ export const getAdvertCounts = async (req, res, next) => {
 
 export const startAdView = async (req, res) => {
   try {
-    // Placeholder logic to handle ad view tracking
-    // You would typically update or create a record in your database
     console.log("Ad view tracking started");
-
     // Respond with success
     res
       .status(200)
@@ -281,10 +278,7 @@ export const startAdView = async (req, res) => {
 
 export const confirmAdView = async (req, res) => {
   try {
-    // Placeholder logic to confirm ad view and process reward
-    // You would typically update user balance or similar
     console.log("Ad view confirmed, reward processed");
-
     // Respond with success
     res
       .status(200)
@@ -297,10 +291,7 @@ export const confirmAdView = async (req, res) => {
 
 export const cancelAdView = async (req, res) => {
   try {
-    // Placeholder logic to cancel ad view and reject reward
-    // You would typically handle any cleanup or state changes
     console.log("Ad view canceled, reward rejected");
-
     // Respond with success
     res
       .status(200)

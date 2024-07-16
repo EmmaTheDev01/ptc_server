@@ -116,3 +116,29 @@ export const findAllUsers = async (req, res) => {
         });
     }
 };
+//Daily user counter
+
+export const getDailyUserCount = async (req, res) => {
+    const startOfDay = moment().startOf('day').toDate();
+    const endOfDay = moment().endOf('day').toDate();
+
+    try {
+        const dailyUserCount = await User.countDocuments({
+            createdAt: {
+                $gte: startOfDay,
+                $lte: endOfDay,
+            },
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'Daily user count fetched successfully',
+            data: dailyUserCount,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch daily user count',
+        });
+    }
+};
