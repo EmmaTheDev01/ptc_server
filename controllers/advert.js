@@ -53,6 +53,7 @@ export const createAdvert = async (req, res, next) => {
         price: req.body.price,
         photo: photoLinks, // Array of photo objects
         imageUrl: req.body.imageUrl,
+        videoUrl: req.body.videoUrl,
         redirect: req.body.redirect,
         featured: req.body.featured || false,
       });
@@ -316,5 +317,41 @@ export const cancelAdView = async (req, res) => {
   } catch (error) {
     // Respond with error if something goes wrong
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+//Controller to approve ads
+// Controller for approving an advert
+export const approveAdvert = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    // Find the advert by ID and update its approved status
+    const advert = await Advert.findByIdAndUpdate(
+      id,
+      { approved: true },
+      { new: true } // To return the updated document
+    );
+
+    if (!advert) {
+      return res.status(404).json({
+        success: false,
+        message: "Advert not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Advert approved successfully",
+      data: advert,
+    });
+  } catch (err) {
+    console.error("Error approving advert:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to approve advert",
+      error: err.message,
+    });
   }
 };
