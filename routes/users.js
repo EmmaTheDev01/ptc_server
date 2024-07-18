@@ -9,6 +9,6 @@ router.delete("/:id", verifyAdmin, deleteUser);
 router.get("/:id", verifyUser, findUser);
 router.get("/", verifyAdmin, findAllUsers);
 router.put("/updatebalance/:id", verifyAdmin, updateUserBalance);
-router.get("/daily-stats", verifyAdmin, getDailyUserCount);
+router.get("/daily", verifyAdmin, getDailyUserCount);
 
 export default router;

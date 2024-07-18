@@ -117,6 +117,7 @@ export const findAllUsers = async (req, res) => {
         });
     }
 };
+
 // Count daily registered users
 export const getDailyUserCount = async (req, res) => {
     // Get the start and end of the current day in UTC
