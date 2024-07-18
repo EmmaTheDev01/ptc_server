@@ -12,6 +12,7 @@ import {
   startAdView,
   confirmAdView,
   cancelAdView,
+  getApprovedAdverts,
 } from "../controllers/advert.js";
 import { verifyAdmin, verifyUser } from "../utils/verifyToken.js";
 
@@ -24,7 +25,8 @@ const upload = multer({ dest: "uploads/" });
 router.post("/create", createAdvert);
 router.put("/:id", verifyUser, updateAdvert);
 router.delete("/:id", verifyAdmin, deleteAdvert);
-router.get("/all-ads", verifyUser, findAllAdverts); // Fixed path should be defined before dynamic paths
+router.get("/all-ads", verifyAdmin, findAllAdverts); // Fixed path should be defined before dynamic paths
+router.get('/approved-ads', verifyAdmin, getApprovedAdverts);
 router.get("/search/getAdvertBySearch", getAdvertBySearch); // Query parameter routes should come after fixed paths
 router.get("/search/getFeaturedAdverts", getFeaturedAdverts);
 router.get("/search/getAdvertCounts", getAdvertCounts);

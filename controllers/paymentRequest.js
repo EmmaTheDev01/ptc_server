@@ -154,30 +154,30 @@ export const approvePaymentRequest = async (req, res) => {
     });
   }
 };
-// Get daily payment request count
-export const getDailyPaymentRequestCount = async (req, res) => {
-  const startOfDay = moment().startOf('day').toDate();
-  const endOfDay = moment().endOf('day').toDate();
+
+export const getDailyPaymentCount = async (req, res) => {
+  const startOfDay = moment().startOf('day').utc().toDate();
+  const endOfDay = moment().endOf('day').utc().toDate();
 
   try {
-    const dailyPaymentRequestCount = await PaymentRequest.countDocuments({
-      createdAt: {
-        $gte: startOfDay,
-        $lte: endOfDay,
-      },
-    });
+      const dailyPaymentCount = await PaymentRequest.countDocuments({
+          createdAt: {
+              $gte: startOfDay,
+              $lte: endOfDay,
+          },
+      });
 
-    res.status(200).json({
-      success: true,
-      message: 'Daily payment request count',
-      data: dailyPaymentRequestCount,
-    });
+      res.status(200).json({
+          success: true,
+          message: 'Daily payment request count',
+          data: dailyPaymentCount,
+      });
   } catch (err) {
-    console.error('Error fetching daily payment request count:', err);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch daily payment request count',
-      error: err.message,
-    });
+      console.error('Error fetching daily payment request count:', err);
+      res.status(500).json({
+          success: false,
+          message: 'Failed to fetch daily payment request count',
+          error: err.message,
+      });
   }
 };

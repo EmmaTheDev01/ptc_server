@@ -7,7 +7,7 @@ import {
     getAllPaymentRequests,
     getAllApprovedPaymentRequests,
     approvePaymentRequest,
-    getDailyPaymentRequestCount,
+    getDailyPaymentCount,
 } from "../controllers/paymentRequest.js";
 
 import { verifyAdmin, verifyUser } from "../utils/verifyToken.js";
@@ -19,6 +19,6 @@ router.get("/:id", verifyUser, getPaymentRequest);
 router.get("/", verifyAdmin, getAllPaymentRequests);
 router.get("/approved", verifyAdmin, getAllApprovedPaymentRequests);
 router.put("/approve/:id", verifyAdmin, approvePaymentRequest);
-router.get("/daily-stats", verifyAdmin, getDailyPaymentRequestCount);
+router.get("/daily", verifyAdmin, getDailyPaymentCount);
 
 export default router;

@@ -205,6 +205,23 @@ export const findAllAdverts = async (req, res, next) => {
   }
 };
 
+//controller for getting only approved ads
+// New controller function for fetching approved adverts
+export const getApprovedAdverts = async (req, res, next) => {
+  try {
+    const approvedAdverts = await Advert.find({ approved: true });
+    res.status(200).json({
+      success: true,
+      message: "Approved adverts",
+      data: approvedAdverts,
+    });
+  } catch (err) {
+    console.error("Error fetching approved adverts:", err);
+    next(err);
+  }
+};
+
+
 // Controller for searching adverts by title
 export const getAdvertBySearch = async (req, res, next) => {
   const { title } = req.query;

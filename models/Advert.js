@@ -26,6 +26,13 @@ const advertSchema = new mongoose.Schema(
     imageUrl: {
       type: String,
     },
+    videoUrl: {
+      type: String,
+    },
+    approved: {
+      type: Boolean,
+      default: false,
+    },
     redirect: {
       type: String,
       required: true,
