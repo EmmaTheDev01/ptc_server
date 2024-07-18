@@ -23,12 +23,11 @@ const upload = multer({ dest: "uploads/" });
 
 // Routes
 router.post("/create", createAdvert);
-router.put("/:id", verifyUser, updateAdvert);
+router.put("/:id", verifyAdmin, updateAdvert);
 router.delete("/:id", verifyAdmin, deleteAdvert);
-router.get("/all-ads", verifyAdmin, findAllAdverts); // Fixed path should be defined before dynamic paths
+router.get("/all-ads", verifyAdmin, findAllAdverts); 
 router.get('/approved-ads', verifyUser, getApprovedAdverts);
-router.get("/search/getAdvertBySearch", getAdvertBySearch); // Query parameter routes should come after fixed paths
-router.get("/search/getFeaturedAdverts", getFeaturedAdverts);
+router.get("/search/getAdvertBySearch", getAdvertBySearch); 
 router.get("/search/getAdvertCounts", getAdvertCounts);
 router.get("/:id", findAdvert); // Dynamic path should come last
 // New Routes for Ad Viewing and Rewards
