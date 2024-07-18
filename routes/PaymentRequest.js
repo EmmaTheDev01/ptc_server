@@ -19,6 +19,6 @@ router.get("/:id", verifyUser, getPaymentRequest);
 router.get("/", verifyAdmin, getAllPaymentRequests);
 router.get("/approved", verifyAdmin, getAllApprovedPaymentRequests);
 router.put("/approve/:id", verifyAdmin, approvePaymentRequest);
-router.get("/daily", verifyAdmin, getDailyPaymentCount);
+router.get("/daily-payment-count", verifyAdmin, getDailyPaymentCount);
 
 export default router;

@@ -155,11 +155,13 @@ export const approvePaymentRequest = async (req, res) => {
   }
 };
 
+// Count daily payment requests
 export const getDailyPaymentCount = async (req, res) => {
   const startOfDay = moment().startOf('day').utc().toDate();
   const endOfDay = moment().endOf('day').utc().toDate();
 
   try {
+      // Count the number of payment requests created today
       const dailyPaymentCount = await PaymentRequest.countDocuments({
           createdAt: {
               $gte: startOfDay,
