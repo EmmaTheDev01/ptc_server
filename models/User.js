@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import crypto from "crypto";
 
 const userSchema = new mongoose.Schema(
   {
@@ -58,6 +59,19 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
     createdAt: { type: Date, default: Date.now },
+    bonus: {
+      type: Number,
+      default: 500,
+    },
+    referralCode: {
+      type: String,
+      default: function() {
+        // Generate random referral code
+        const randomBytes = crypto.randomBytes(3).toString("hex").toUpperCase();
+        return `REF-${randomBytes}`;
+      },
+      unique: true,
+    },
   },
   { timestamps: true }
 );
