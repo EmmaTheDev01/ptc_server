@@ -7,34 +7,31 @@ import crypto from "crypto";
 
 // User registration controller
 export const register = async (req, res) => {
+  console.log("Register endpoint hit"); // Log when the endpoint is hit
   try {
     const { username, email, password, phone, photo, referredBy } = req.body;
+
+    console.log("Registration request data:", { username, email, phone, referredBy });
 
     // Check if referredBy is provided and valid
     let referrer = "";
     if (referredBy) {
-      const referrerUser = await User.findOne({ referralCode: referredBy });
-      if (referrerUser) {
-        referrer = referredBy; // Set the referrer if the code is valid
-      } else {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid referral code",
-        });
-      }
+      console.log("Checking referral code:", referredBy);
     }
 
-    let newUser;
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
+    console.log("Password hashed successfully");
 
+    let newUser;
     if (photo) {
-      // Usage of cloudinary to upload avatar
+      console.log("Uploading photo to Cloudinary");
       let myCloud;
       try {
         myCloud = await cloudinary.v2.uploader.upload(photo, {
           folder: "avatars",
         });
+        console.log("Photo uploaded successfully:", myCloud.secure_url);
       } catch (error) {
         console.error("Cloudinary upload error:", error);
         return res.status(500).json({
@@ -52,7 +49,7 @@ export const register = async (req, res) => {
           public_id: myCloud.public_id,
           url: myCloud.secure_url,
         },
-        referredBy: referrer,
+        referredBy,
       });
     } else {
       newUser = new User({
@@ -60,18 +57,25 @@ export const register = async (req, res) => {
         email,
         phone,
         password: hash,
-        referredBy: referrer,
+        referredBy,
       });
     }
 
-    // Generate referral code for the new user
-    newUser.referralCode = newUser.referralCode || generateReferralCode();
-    
     await newUser.save();
+    console.log("User registered successfully:", newUser._id);
+
+    // If a referral code was used, update the referrer’s record
+    if (referrer) {
+      await User.findOneAndUpdate(
+        { referralCode: referrer },
+        { $inc: { bonus: 100 } } // Increment bonus or any other logic
+      );
+    }
+
     res.status(200).json({
       success: true,
       message: "User registered successfully",
-      referralCode: newUser.referralCode // Return the referral code of the new user
+      referralCode: newUser.referralCode, // Return the referral code of the new user
     });
   } catch (err) {
     console.error("User registration error:", err);
@@ -81,14 +85,6 @@ export const register = async (req, res) => {
     });
   }
 };
-
-// Helper function to generate referral code
-const generateReferralCode = () => {
-  const randomBytes = crypto.randomBytes(3).toString("hex").toUpperCase();
-  return `REF-${randomBytes}`;
-};
-
-
 // User authentication controllers
 export const login = async (req, res) => {
   const { email, password } = req.body;
