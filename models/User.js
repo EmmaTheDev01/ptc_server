@@ -65,12 +65,17 @@ const userSchema = new mongoose.Schema(
     },
     referralCode: {
       type: String,
-      default: function() {
+      default: function () {
         // Generate random referral code
         const randomBytes = crypto.randomBytes(3).toString("hex").toUpperCase();
         return `REF-${randomBytes}`;
       },
       unique: true,
+    },
+    referredBy: {
+      type: String,
+      default: "", // Store the referral code of the user who referred this user
+      match: [/^REF-[A-F0-9]{6}$/, "Please use a valid referral code"], // Adjust if needed
     },
   },
   { timestamps: true }
