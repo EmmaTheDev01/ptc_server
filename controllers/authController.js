@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import cloudinary from "cloudinary";
 import nodemailer from "nodemailer";
+import crypto from "crypto";
 
 // User registration controller
 export const register = async (req, res) => {
@@ -86,6 +87,7 @@ const generateReferralCode = () => {
   const randomBytes = crypto.randomBytes(3).toString("hex").toUpperCase();
   return `REF-${randomBytes}`;
 };
+
 
 // User authentication controllers
 export const login = async (req, res) => {
