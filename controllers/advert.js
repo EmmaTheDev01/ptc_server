@@ -1,4 +1,3 @@
-// controllers/advertController.js
 import mongoose from "mongoose";
 import Advert from "../models/Advert.js";
 import cloudinary from "../utils/cloudinaryConfig.js";
@@ -72,7 +71,8 @@ export const createAdvert = async (req, res, next) => {
     next(err);
   }
 };
-// Controller for updating an advert
+
+// Controller for updating an advert with photo upload or image URL
 export const updateAdvert = async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -105,12 +105,6 @@ export const updateAdvert = async (req, res, next) => {
         }
       }
 
-      // Validate the updatedFields object
-      const validationError = Advert.validate(req.body);
-      if (validationError) {
-        throw validationError;
-      }
-
       // Update advert in MongoDB
       const updatedAdvert = await Advert.findByIdAndUpdate(
         id,
@@ -136,8 +130,6 @@ export const updateAdvert = async (req, res, next) => {
     next(err);
   }
 };
-
-// Other controller functions (delete, find, findAll, search, etc.) as per your requirements
 
 // Controller for deleting an advert
 export const deleteAdvert = async (req, res, next) => {
@@ -206,7 +198,6 @@ export const findAllAdverts = async (req, res, next) => {
   }
 };
 
-//controller for getting only approved ads
 // New controller function for fetching approved adverts
 export const getApprovedAdverts = async (req, res, next) => {
   try {
@@ -221,7 +212,6 @@ export const getApprovedAdverts = async (req, res, next) => {
     next(err);
   }
 };
-
 
 // Controller for searching adverts by title
 export const getAdvertBySearch = async (req, res, next) => {
@@ -280,16 +270,11 @@ export const getAdvertCounts = async (req, res, next) => {
 };
 
 // Simplified controller functions for ad viewing and rewards
-
 export const startAdView = async (req, res) => {
   try {
     console.log("Ad view tracking started");
-    // Respond with success
-    res
-      .status(200)
-      .json({ success: true, message: "Ad view tracking started" });
+    res.status(200).json({ success: true, message: "Ad view tracking started" });
   } catch (error) {
-    // Respond with error if something goes wrong
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -297,12 +282,8 @@ export const startAdView = async (req, res) => {
 export const confirmAdView = async (req, res) => {
   try {
     console.log("Ad view confirmed, reward processed");
-    // Respond with success
-    res
-      .status(200)
-      .json({ success: true, message: "Ad view confirmed, reward processed" });
+    res.status(200).json({ success: true, message: "Ad view confirmed, reward processed" });
   } catch (error) {
-    // Respond with error if something goes wrong
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -310,28 +291,21 @@ export const confirmAdView = async (req, res) => {
 export const cancelAdView = async (req, res) => {
   try {
     console.log("Ad view canceled, reward rejected");
-    // Respond with success
-    res
-      .status(200)
-      .json({ success: true, message: "Ad view canceled, reward rejected" });
+    res.status(200).json({ success: true, message: "Ad view canceled, reward rejected" });
   } catch (error) {
-    // Respond with error if something goes wrong
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-
-//Controller to approve ads
 // Controller for approving an advert
 export const approveAdvert = async (req, res) => {
   const id = req.params.id;
 
   try {
-    // Find the advert by ID and update its approved status
     const advert = await Advert.findByIdAndUpdate(
       id,
       { approved: true },
-      { new: true } // To return the updated document
+      { new: true }
     );
 
     if (!advert) {
