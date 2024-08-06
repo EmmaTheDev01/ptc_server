@@ -15,14 +15,16 @@ const advertSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    photo: {
-      public_id: {
-        type: String,
+    photo: [
+      {
+        public_id: {
+          type: String,
+        },
+        url: {
+          type: String,
+        },
       },
-      url: {
-        type: String,
-      },
-    },
+    ],
     imageUrl: {
       type: String,
     },

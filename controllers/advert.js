@@ -32,19 +32,18 @@ export const createAdvert = async (req, res, next) => {
 
       let photoLinks = [];
 
-      // Upload images to Cloudinary
       if (req.files && req.files.length > 0) {
         photoLinks = await Promise.all(
           req.files.map(async (file) => {
-            const imageUrl = await uploadImageToCloudinary(file);
+            const photoUrl = await uploadImageToCloudinary(file);
             return {
-              public_id: imageUrl.public_id,
-              url: imageUrl.url,
+              public_id: photoUrl.public_id,
+              url: photoUrl.url,
             };
           })
         );
       }
-
+      
       // Create new advert object
       const newAdvert = new Advert({
         title: req.body.title,
