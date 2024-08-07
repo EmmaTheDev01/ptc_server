@@ -89,10 +89,10 @@ export const updateAdvert = async (req, res, next) => {
       if (req.files && req.files.length > 0) {
         photoLinks = await Promise.all(
           req.files.map(async (file) => {
-            const imageUrl = await uploadImageToCloudinary(file);
+            const photoUrl = await uploadImageToCloudinary(file);
             return {
-              public_id: imageUrl.public_id,
-              url: imageUrl.url,
+              public_id: photoUrl.public_id,
+              url: photoUrl.url,
             };
           })
         );
@@ -328,3 +328,36 @@ export const approveAdvert = async (req, res) => {
     });
   }
 };
+// Controller for disapproving an advert
+export const disapproveAdvert = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const advert = await Advert.findByIdAndUpdate(
+      id,
+      { approved: false },
+      { new: true }
+    );
+
+    if (!advert) {
+      return res.status(404).json({
+        success: false,
+        message: "Advert not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Advert disapproved successfully",
+      data: advert,
+    });
+  } catch (err) {
+    console.error("Error disapproving advert:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to disapprove advert",
+      error: err.message,
+    });
+  }
+};
+

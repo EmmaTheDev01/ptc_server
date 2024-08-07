@@ -14,6 +14,7 @@ import {
   cancelAdView,
   getApprovedAdverts,
   approveAdvert,
+  disapproveAdvert,
 } from "../controllers/advert.js";
 import { verifyAdmin, verifyUser } from "../utils/verifyToken.js";
 
@@ -29,6 +30,7 @@ router.delete("/:id", verifyAdmin, deleteAdvert);
 router.get("/all-ads", verifyAdmin, findAllAdverts); 
 router.get('/approved-ads', verifyUser, getApprovedAdverts);
 router.put("/approve/:id", verifyAdmin, approveAdvert);
+router.put("/disapprove/:id", verifyAdmin, disapproveAdvert);
 router.get("/search/getAdvertBySearch", getAdvertBySearch); 
 router.get("/search/getAdvertCounts", getAdvertCounts);
 router.get("/:id", findAdvert); // Dynamic path should come last
