@@ -248,3 +248,41 @@ export const resetPassword = async (req, res) => {
     });
   }
 };
+
+// Controller to verify user password
+export const verifyPassword = async (req, res) => {
+  const { password } = req.body;
+
+  try {
+    // Retrieve the user based on the authenticated user's ID
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Compare the provided password with the stored hashed password
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (isMatch) {
+      res.status(200).json({
+        success: true,
+        valid: true,
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        valid: false,
+      });
+    }
+  } catch (err) {
+    console.error("Password verification error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to verify password",
+    });
+  }
+};
