@@ -77,6 +77,12 @@ const userSchema = new mongoose.Schema(
       default: "", // Store the referral code of the user who referred this user
       match: [/^REF-[A-F0-9]{6}$/, "Please use a valid referral code"], // Adjust if needed
     },
+    watchedAds: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Ad', // Make sure to replace 'Ad' with the actual name of your Ad model if different
+      },
+    ],
   },
   { timestamps: true }
 );

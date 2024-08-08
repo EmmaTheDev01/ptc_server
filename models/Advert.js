@@ -19,12 +19,6 @@ const advertSchema = new mongoose.Schema(
       type: Number,
       default: 30,
     },
-    watchedBy: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
     photo: [
       {
         public_id: {
