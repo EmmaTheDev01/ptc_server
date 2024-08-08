@@ -15,6 +15,16 @@ const advertSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    timeout: {
+      type: Number,
+      default: 30,
+    },
+    watchedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     photo: [
       {
         public_id: {
@@ -49,5 +59,8 @@ const advertSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Create an index on watchedBy for better performance in queries involving this field
+advertSchema.index({ watchedBy: 1 });
 
 export default mongoose.model("Advert", advertSchema);

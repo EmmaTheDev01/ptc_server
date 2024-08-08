@@ -54,6 +54,7 @@ export const createAdvert = async (req, res, next) => {
         videoUrl: req.body.videoUrl,
         redirect: req.body.redirect,
         featured: req.body.featured || false,
+        timeout: req.body.timeout 
       });
 
       // Save advert to MongoDB
