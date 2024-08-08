@@ -42,6 +42,10 @@ const userSchema = new mongoose.Schema(
       enum: ["basic", "standard", "premium"],
       default: "basic",
     },
+    membershipUpdatedAt: {
+      type: Date,
+      default: null, // Initialize as null if no upgrade has occurred yet
+    },
     photo: {
       public_id: {
         type: String,
@@ -80,11 +84,19 @@ const userSchema = new mongoose.Schema(
     watchedAds: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Advert', 
+        ref: 'Advert',
       },
     ],
   },
   { timestamps: true }
 );
+
+// Middleware to update `membershipUpdatedAt` when `membership` field changes
+userSchema.pre('save', function (next) {
+  if (this.isModified('membership')) {
+    this.membershipUpdatedAt = new Date();
+  }
+  next();
+});
 
 export default mongoose.model("User", userSchema);
