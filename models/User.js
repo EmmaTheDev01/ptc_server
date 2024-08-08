@@ -80,7 +80,7 @@ const userSchema = new mongoose.Schema(
     watchedAds: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Ad', // Make sure to replace 'Ad' with the actual name of your Ad model if different
+        ref: 'Advert', 
       },
     ],
   },
